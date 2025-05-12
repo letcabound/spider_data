@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>FastAPI Frontend</title>
+</head>
+<body>
+    <h2>查询接口 /items/{item_id}?q=xxx</h2>
+
+    <label for="itemIdInput">请输入 item_id：</label>
+    <input type="number" id="itemIdInput" placeholder="例如：110" /><br><br>
+
+    <label for="qInput">请输入 q 的内容：</label>
+    <input type="text" id="qInput" placeholder="例如：哇哈哈" /><br><br>
+
+    <button onclick="fetchData()">发送请求</button>
+
+    <h3 id="result">等待查询...</h3>
+
+    <script>
+        function fetchData() {
+            const itemId = document.getElementById("itemIdInput").value.trim();
+            const q = document.getElementById("qInput").value.trim();
+
+            if (!itemId || !q) {
+                document.getElementById("result").innerText = "请输入完整的 item_id 和 q";
+                return;
+            }
+
+            const url = `http://127.0.0.1:8000/items/${itemId}?q=${encodeURIComponent(q)}`;
+
+            fetch(url)
+                .then(res => {
+                    if (!res.ok) throw new Error("请求失败");
+                    return res.json();
+                })
+                .then(data => {
+                    document.getElementById("result").innerText =
+                        `返回结果：item_id = ${data.item_id}, q = ${data.q}`;
+                })
+                .catch(err => {
+                    document.getElementById("result").innerText = "❌ 接口请求失败";
+                    console.error(err);
+                });
+        }
+    </script>
+</body>
+</html>
